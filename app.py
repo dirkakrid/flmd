@@ -42,6 +42,7 @@ class file_parser:
 @app.route('/')
 @app.route('/<path:file>')
 def index(file='/'):
+	file_obj(file)
 	file_name = rrmadd(config('content.dir').data, '/') + '{}' + lrmadd(config('content.ext').data, '.')
 	output = None
 	if file.endswith('/'):
