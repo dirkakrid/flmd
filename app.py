@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask, abort, render_template, Markup
 import os, json, markdown
 
 app = Flask(__name__)
@@ -28,7 +28,7 @@ def get_md(file):
 	if os.path.isfile(file):
 		with open(file, 'r') as file_obj:
 			file_contents = file_obj.read()
-		return markdown.markdown(file_contents)
+		return Markup(markdown.markdown(file_contents))
 
 @app.route('/')
 @app.route('/<path:file>')
@@ -41,7 +41,7 @@ def index(file='/'):
 		output = get_md(file_name.format(file))
 		if output == None:
 			output = get_md(file_name.format(file + '/index'))
-	return output if output is not None else abort(404)
+	return render_template('index.html', content=output) if output is not None else abort(404)
 
 
 @app.errorhandler(404)
