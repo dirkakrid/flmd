@@ -30,11 +30,6 @@ class config:
 		else:
 			self.data = data
 
-class url:
-	def __init__(self, url):
-		if url.endswith('/'):
-			pass
-
 class File:
 	def __init__(self, url):
 		self.content = ''
