@@ -1,5 +1,5 @@
 from flask import Flask, abort
-import os, json
+import os, json, markdown
 
 app = Flask(__name__)
 
@@ -29,8 +29,9 @@ class config:
 def index(file=None):
 	file = config('content_dir').data + file + config('ext').data
 	if os.path.isfile(file):
-		file = open(file, 'r')
-		print file
+		with open(file, 'r') as file:
+			file = file.read()
+		return markdown.markdown(file)
 	else:
 		abort(404)
 
