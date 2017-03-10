@@ -1,0 +1,5 @@
+{
+	"name": "default",
+	"default_template": "index",
+	"ext": "html"
+}

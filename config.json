@@ -7,7 +7,6 @@
 	"ext": ".md",
 	"themes": {
 		"dir": "themes",
-		"current": "default",
-		"ext": "html"
+		"current": "default"
 	}
 }
