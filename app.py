@@ -41,7 +41,8 @@ class theme:
 		self.current_theme = config('theme.current').data
 
 	def get_template(self, template):
-		if is_file(self.theme)
+		if is_file(self.theme_dir + template):
+			print 'theme'
 
 class file_parser:
 	def __init__(self, file_name):
@@ -49,7 +50,7 @@ class file_parser:
 
 	def get_md_from_file(self):
 		if is_file(self.file_name):
-			with open(file, 'r') as file_obj:
+			with open(self.file_name, 'r') as file_obj:
 				file_contents = file_obj.read()
 			return markdown.markdown(file_contents)
 
