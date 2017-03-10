@@ -1,6 +1,13 @@
 {
+	"content": {
+		"dir": "content",
+		"ext": "md"
+	},
 	"content_dir": "content/",
 	"ext": ".md",
-	"themes_dir": "themes",
-	"current_theme": "default"
+	"themes": {
+		"dir": "themes",
+		"current": "default",
+		"ext": "html"
+	}
 }
