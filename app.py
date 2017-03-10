@@ -24,16 +24,24 @@ class config:
 		else:
 			self.data = data
 
+def get_md(file):
+	if os.path.isfile(file):
+		with open(file, 'r') as file_obj:
+			file_contents = file_obj.read()
+		return markdown.markdown(file_contents)
+
 @app.route('/')
 @app.route('/<path:file>')
-def index(file=None):
-	file = config('content_dir').data + file + config('ext').data
-	if os.path.isfile(file):
-		with open(file, 'r') as file:
-			file = file.read()
-		return markdown.markdown(file)
+def index(file='/'):
+	file_name = config('content_dir').data + '{}' + config('ext').data
+	output = None
+	if file.endswith('/'):
+		output = get_md(file_name.format(file + 'index'))
 	else:
-		abort(404)
+		output = get_md(file_name.format(file))
+		if output == None:
+			output = get_md(file_name.format(file + '/index'))
+	return output if output is not None else abort(404)
 
 
 @app.errorhandler(404)
