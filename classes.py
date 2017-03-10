@@ -45,8 +45,6 @@ class Filename:
 			elif file_exists(self.file_path('index')):
 				self.file = self.file_path('index')
 
-		abort(404)
-
 	def file_path(self, name):
 		# returns full file name, content_dir, file_name, file_ext
 		content_dir = append_char(config('content.dir').data, '/')
@@ -54,13 +52,17 @@ class Filename:
 		return content_dir + file_name
 
 class contents:
-	def get_file_content(self):
-		with open(self.file, 'r') as file_obj:
-			file_contents = file_obj.read()
-		self.content = file_contents
+	def __init__(self, file_path):
+		self.content = self.get_file_content(file_path)
+		self.compiled = self.parse_md(self.content)
 
-	def parse_md(self):
-		self.content = markdown.markdown(self.content)
+	def get_file_content(self, file_path):
+		with open(file_path, 'r') as file_obj:
+			file_content = file_obj.read()
+		return file_content
+
+	def parse_md(self, content):
+		return markdown.markdown(content)
 
 class theme:
 	def __init__(self):

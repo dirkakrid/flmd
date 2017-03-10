@@ -10,8 +10,8 @@ app.debug = True
 @app.route('/')
 @app.route('/<path:url>')
 def index(url='/'):
-	filename = Filename(url)
-	content = filename.file
+	filename = Filename(url).file
+	content = contents(filename).compiled
 	return render_template('index.html', content=Markup(content)) if content is not None else abort(404)
 
 @app.errorhandler(404)
