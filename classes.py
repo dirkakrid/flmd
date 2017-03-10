@@ -30,31 +30,30 @@ class config:
 		else:
 			self.data = data
 
-class File:
+class Filename:
 	def __init__(self, url):
-		self.content = ''
 		self.file = ''
-		if url.endswith('/'):
-			if file_exists(self.file_name('index')):
-				self.file = self.file_name('index')
-			elif file_exists(self.file_name(url)):
-				self.file = self.file_name(url)
-		else:
-			if file_exists(self.file_name(url)):
-				self.file = self.file_name(url)
-			elif file_exists(self.file_name('index')):
-				self.file = self.file_name('index')
-		if file_exists(self.file):
-			self.get_file_content()
-			self.parse_md()
-		# abort(404)
 
-	def file_name(self, name):
+		if url.endswith('/'):
+			if file_exists(self.file_path('index')):
+				self.file = self.file_path('index')
+			elif file_exists(self.file_path(url)):
+				self.file = self.file_path(url)
+		else:
+			if file_exists(self.file_path(url)):
+				self.file = self.file_path(url)
+			elif file_exists(self.file_path('index')):
+				self.file = self.file_path('index')
+
+		abort(404)
+
+	def file_path(self, name):
 		# returns full file name, content_dir, file_name, file_ext
 		content_dir = append_char(config('content.dir').data, '/')
 		file_name = append_char(name, prepend_char(config('content.ext').data, '.'))
 		return content_dir + file_name
 
+class contents:
 	def get_file_content(self):
 		with open(self.file, 'r') as file_obj:
 			file_contents = file_obj.read()
@@ -65,10 +64,17 @@ class File:
 
 class theme:
 	def __init__(self):
-		self.theme_dir = append_char(config('theme.dir').data, '/')
-		self.current_theme = config('theme.current').data
-		self.theme_config = config(file=theme_dir+append_char(self.current_theme, '/'))
-		print self.theme_config
+		self.path = self.theme_path()
+		self.config = self.theme_config(self.path)
+
+	def theme_path(self):
+		theme_dir = append_char(config('theme.dir').data, '/')
+		theme_name = append_char(config('theme.current').data, '/')
+		return theme_dir + theme_name
+
+	def theme_config(path):
+		if file_exists(path + 'config.json'):
+			return config(file=path+'config.json').data
 
 	def get_template(self, template):
 		if file_exists(self.theme_dir + template):
