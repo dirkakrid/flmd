@@ -1,4 +1,6 @@
 {
 	"content_dir": "content/",
-	"ext": ".md"
+	"ext": ".md",
+	"themes_dir": "themes",
+	"current_theme": "default"
 }
