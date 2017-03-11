@@ -1,12 +1,22 @@
 {
+	"debug": true,
+
+	"meta": {
+		"title": "flmd",
+		"description": "",
+		"author": ""
+	},
+
 	"files": {
 		"dir": "content",
 		"ext": "md"
 	},
+
 	"themes": {
 		"dir": "themes",
 		"current": "default"
 	},
+
 	"plugins": {
 		"dir": "plugins"
 	}

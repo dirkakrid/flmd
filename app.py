@@ -8,7 +8,7 @@ from classes import *
 app = Flask(__name__)
 
 app.threaded = True
-app.debug = True
+app.debug = config('debug').data or False
 
 theme = Theme()
 app.template_folder = theme.jinja_dir
@@ -24,12 +24,12 @@ def pre_files(file):
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	template = Template(content.args.get('template'))
+	template = Template(content.args.get('template', ''))
 	return render_template(template.template, content=content.content, **content.args)
 
 @app.errorhandler(404)
 def _404(error):
-	return '404', 404
+	return index('404')
 
 if __name__ == "__main__":
 	app.run()
