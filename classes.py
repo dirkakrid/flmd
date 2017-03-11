@@ -1,5 +1,5 @@
 from flask import abort, render_template, Markup
-import os, json, markdown
+import os, json, markdown, frontmatter
 
 def append_char(string, char):
 	return string + char if not string.endswith(char) else string
@@ -31,6 +31,7 @@ class config:
 
 class Filename:
 	def __init__(self, url):
+		self.main_config = config('files').data
 		self.file = ''
 
 		if url.endswith('/'):
@@ -38,37 +39,39 @@ class Filename:
 				self.file = self.file_path(url + 'index')
 			elif file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
+			else:
+				abort(404)
 		else:
 			if file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
 			elif file_exists(self.file_path(url + '/' + 'index')):
 				self.file = self.file_path(url + '/' + 'index')
+			else:
+				abort(404)
 
 	def file_path(self, name):
 		# returns full file name, content_dir, file_name, file_ext
-		content_dir = append_char(config('content.dir').data, '/')
-		file_name = append_char(name, prepend_char(config('content.ext').data, '.'))
+		content_dir = append_char(self.main_config.get('dir'), '/')
+		file_name = append_char(name, prepend_char(self.main_config.get('ext'), '.'))
 		return content_dir + file_name
 
 class Content:
 	def __init__(self, file_path):
-		self.content = self.get_file_content(file_path)
-		self.args = {}
-		self.compiled = self.parse_md(self.content)
+		data = frontmatter.loads(self.file_contents(file_path))
+		self.content = Markup(markdown.markdown(data.content))
+		self.args = data.metadata
 
-	def get_file_content(self, file_path):
+	def file_contents(self, file_path):
 		with open(file_path, 'r') as file_obj:
-			file_content = file_obj.read()
-		return file_content
-
-	def parse_md(self, content):
-		return Markup(markdown.markdown(content))
+			file_contents = file_obj.read()
+		return file_contents
 
 class Theme:
 	def __init__(self):
-		self.jinja_dir = os.path.abspath(config('themes.dir').data)
-		self.themes_dir = append_char(config('themes.dir').data, '/')
-		self.theme_path = append_char(config('themes.current').data, '/')
+		main_config = config('themes').data
+		self.jinja_dir = os.path.abspath(main_config.get('dir'))
+		self.themes_dir = append_char(main_config.get('dir'), '/')
+		self.theme_path = append_char(main_config.get('current'), '/')
 		self.theme_config()
 
 	def theme_config(self):
@@ -95,3 +98,7 @@ class Template:
 				self.template = template_file
 			else:
 				raise NameError('template not found `{}`'.format(theme.theme_path + template_name + theme_ext))
+
+class Plugin:
+	def __init__(self):
+		main_config = config('plugins').data

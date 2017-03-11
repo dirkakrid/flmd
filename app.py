@@ -1,7 +1,7 @@
 from flask import Flask, abort, render_template, Markup
 from preflask import preflask
 
-import os, json, markdown
+import os, json, markdown, frontmatter
 
 from classes import *
 
@@ -24,8 +24,8 @@ def pre_files(file):
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	template = Template()
-	return render_template(template.template, content=content.compiled) if content.compiled is not None else abort(404)
+	template = Template(content.args.get('template'))
+	return render_template(template.template, content=content.content, **content.args)
 
 @app.errorhandler(404)
 def _404(error):

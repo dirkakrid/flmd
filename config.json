@@ -1,12 +1,13 @@
 {
-	"content": {
+	"files": {
 		"dir": "content",
 		"ext": "md"
 	},
-	"content_dir": "content",
-	"ext": ".md",
 	"themes": {
 		"dir": "themes",
 		"current": "default"
+	},
+	"plugins": {
+		"dir": "plugins"
 	}
 }
