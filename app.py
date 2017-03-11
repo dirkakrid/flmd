@@ -1,11 +1,20 @@
 from flask import Flask, abort, render_template, Markup
+from preflask import preflask
+
 import os, json, markdown
+
 from classes import *
 
 app = Flask(__name__)
 
 app.threaded = True
 app.debug = True
+
+pre = preflask()
+
+@app.route(pre.rule)
+def pre_files(file):
+    return pre.serve(file)
 
 @app.route('/')
 @app.route('/<path:url>')
