@@ -10,6 +10,9 @@ app = Flask(__name__)
 app.threaded = True
 app.debug = True
 
+theme = Theme()
+app.template_folder = theme.jinja_dir
+
 pre = preflask()
 
 @app.route(pre.rule)
@@ -21,9 +24,8 @@ def pre_files(file):
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	theme = Theme()
-	app.template_folder = theme.dir
-	return render_template(theme.template, content=content.compiled) if content.compiled is not None else abort(404)
+	template = Template('index')
+	return render_template(template.template, content=content.compiled) if content.compiled is not None else abort(404)
 
 @app.errorhandler(404)
 def _404(error):

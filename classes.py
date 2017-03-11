@@ -65,24 +65,35 @@ class Content:
 		return Markup(markdown.markdown(content))
 
 class Theme:
-	def __init__(self, template=''):
+	def __init__(self):
 		self.jinja_dir = os.path.abspath(config('themes.dir').data)
 		self.themes_dir = append_char(config('themes.dir').data, '/')
 		self.theme_path = append_char(config('themes.current').data, '/')
 		self.theme_config()
-		self.template(template)
 
 	def theme_config(self):
 		config_file = self.themes_dir + self.theme_path + 'config.json'
 		if file_exists(config_file):
 			self.config = config(file=config_file).data or {}
 
+class Template:
+	def __init__(self, template=''):
+		self.template(template)
+
 	def template(self, template_name):
-		template_file = self.theme_path + template_name + prepend_char(self.config.get('ext'), '.')
-		if file_exists(self.themes_dir + template_file):
+		theme = Theme()
+		template_file = theme.theme_path + template_name + prepend_char(theme.config.get('ext'), '.')
+		if file_exists(theme.themes_dir + template_file):
 			self.template = template_file
 		else:
-			if file_exists(self.themes_dir + self.theme_path + 'index' + prepend_char(self.config.get('ext'), '.')):
-				self.template = self.theme_path + 'index' + prepend_char(self.config.get('ext'), '.')
+			if file_exists(theme.themes_dir + theme.theme_path + 'index' + prepend_char(theme.config.get('ext'), '.')):
+				self.template = theme.theme_path + 'index' + prepend_char(theme.config.get('ext'), '.')
 			else:
 				raise NameError('template not found `{}`'.format(template_file))
+
+class error:
+	def __init__(self, error_code=0):
+		if error_code == 404:
+			filename = Filename('404').file
+			content = Content(filename)
+			theme = Theme()
