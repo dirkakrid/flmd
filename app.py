@@ -21,12 +21,12 @@ def pre_files(file):
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	theme = Theme(template=content.args.get('template'))
+	theme = Theme()
 	app.template_folder = theme.dir
 	return render_template(theme.template, content=content.compiled) if content.compiled is not None else abort(404)
 
 @app.errorhandler(404)
-def error_404(err):
+def _404(error):
 	return '404', 404
 
 if __name__ == "__main__":
