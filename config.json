@@ -3,7 +3,7 @@
 		"dir": "content",
 		"ext": "md"
 	},
-	"content_dir": "content/",
+	"content_dir": "content",
 	"ext": ".md",
 	"themes": {
 		"dir": "themes",

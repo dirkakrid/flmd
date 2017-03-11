@@ -14,9 +14,10 @@ def file_exists(file):
 
 class config:
 	def __init__(self, val=None, file='config.json', delim='.'):
-		with open(file) as f:
-			data = json.load(f)
+		with open(file) as config_obj:
+			data = json.load(config_obj)
 
+		self.data = data
 		if val != None:
 			val = val.split(delim)
 			ndata = data
@@ -27,8 +28,6 @@ class config:
 					ndata = None
 			else:
 				self.data = ndata
-		else:
-			self.data = data
 
 class Filename:
 	def __init__(self, url):
@@ -51,9 +50,10 @@ class Filename:
 		file_name = append_char(name, prepend_char(config('content.ext').data, '.'))
 		return content_dir + file_name
 
-class contents:
+class Content:
 	def __init__(self, file_path):
 		self.content = self.get_file_content(file_path)
+		self.args = {}
 		self.compiled = self.parse_md(self.content)
 
 	def get_file_content(self, file_path):
@@ -62,21 +62,22 @@ class contents:
 		return file_content
 
 	def parse_md(self, content):
-		return markdown.markdown(content)
+		return Markup(markdown.markdown(content))
 
-class theme:
+class Theme:
 	def __init__(self):
 		self.path = self.theme_path()
 		self.config = self.theme_config(self.path)
 
 	def theme_path(self):
-		theme_dir = append_char(config('theme.dir').data, '/')
-		theme_name = append_char(config('theme.current').data, '/')
+		theme_dir = append_char(config('themes.dir').data, '/')
+		theme_name = append_char(config('themes.current').data, '/')
 		return theme_dir + theme_name
 
-	def theme_config(path):
+	def theme_config(self, path):
 		if file_exists(path + 'config.json'):
-			return config(file=path+'config.json').data
+			config_file = path + 'config.json'
+			return config(file=config_file)
 
 	def get_template(self, template):
 		if file_exists(self.theme_dir + template):

@@ -11,8 +11,9 @@ app.debug = True
 @app.route('/<path:url>')
 def index(url='/'):
 	filename = Filename(url).file
-	content = contents(filename).compiled
-	return render_template('index.html', content=Markup(content)) if content is not None else abort(404)
+	content = Content(filename)
+	theme = Theme()
+	return render_template('index.html', content=content.compiled) if content.compiled is not None else abort(404)
 
 @app.errorhandler(404)
 def error_404(err):
