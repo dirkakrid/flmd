@@ -34,15 +34,15 @@ class Filename:
 		self.file = ''
 
 		if url.endswith('/'):
-			if file_exists(self.file_path('index')):
-				self.file = self.file_path('index')
+			if file_exists(self.file_path(url + 'index')):
+				self.file = self.file_path(url + 'index')
 			elif file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
 		else:
 			if file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
-			elif file_exists(self.file_path('index')):
-				self.file = self.file_path('index')
+			elif file_exists(self.file_path(url + '/' + 'index')):
+				self.file = self.file_path(url + '/' + 'index')
 
 	def file_path(self, name):
 		# returns full file name, content_dir, file_name, file_ext
