@@ -24,7 +24,7 @@ def pre_files(file):
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	template = Template('index')
+	template = Template()
 	return render_template(template.template, content=content.compiled) if content.compiled is not None else abort(404)
 
 @app.errorhandler(404)

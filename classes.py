@@ -82,18 +82,16 @@ class Template:
 
 	def template(self, template_name):
 		theme = Theme()
-		template_file = theme.theme_path + template_name + prepend_char(theme.config.get('ext'), '.')
+		theme_ext = prepend_char(theme.config.get('ext'), '.')
+		default_template = theme.config.get('default_template')
+
+		template_file = theme.theme_path + template_name + theme_ext
+
 		if file_exists(theme.themes_dir + template_file):
 			self.template = template_file
 		else:
-			if file_exists(theme.themes_dir + theme.theme_path + 'index' + prepend_char(theme.config.get('ext'), '.')):
-				self.template = theme.theme_path + 'index' + prepend_char(theme.config.get('ext'), '.')
+			template_file = theme.theme_path + default_template + theme_ext
+			if file_exists(theme.themes_dir + template_file):
+				self.template = template_file
 			else:
-				raise NameError('template not found `{}`'.format(template_file))
-
-class error:
-	def __init__(self, error_code=0):
-		if error_code == 404:
-			filename = Filename('404').file
-			content = Content(filename)
-			theme = Theme()
+				raise NameError('template not found `{}`'.format(theme.theme_path + template_name + theme_ext))
