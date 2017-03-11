@@ -1,5 +1,5 @@
 from flask import abort, render_template, Markup
-import os, json, markdown, frontmatter
+import os, sys, json, markdown, frontmatter
 
 def append_char(string, char):
 	return string + char if not string.endswith(char) else string
@@ -102,3 +102,5 @@ class Template:
 class Plugin:
 	def __init__(self):
 		main_config = config('plugins').data
+		self.plugins_dir = append_char(main_config.get('dir'), '/')
+		self.plugins = os.listdir(self.plugins_dir) if os.path.isdir(self.plugins_dir) else []

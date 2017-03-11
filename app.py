@@ -11,6 +11,7 @@ app.threaded = True
 app.debug = config('debug').data or False
 
 theme = Theme()
+
 app.template_folder = theme.jinja_dir
 
 pre = preflask()
