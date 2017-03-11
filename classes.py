@@ -65,20 +65,30 @@ class Content:
 		return Markup(markdown.markdown(content))
 
 class Theme:
-	def __init__(self):
+	def __init__(self, template=None):
+		self.dir = os.path.abspath(config('themes.dir').data)
+		themes_dir = append_char(config('themes.dir').data, '/')
 		self.path = self.theme_path()
-		self.config = self.theme_config(self.path)
+		self.config = self.theme_config(themes_dir + self.path)
+
+		if template != None and file_exists(themes_dir + self.template_path(template)):
+			self.template = self.template_path(template)
+		elif file_exists(themes_dir + self.template_path('index')):
+			self.template = self.template_path('index')
+		else:
+			self.template = ''
 
 	def theme_path(self):
-		theme_dir = append_char(config('themes.dir').data, '/')
-		theme_name = append_char(config('themes.current').data, '/')
-		return theme_dir + theme_name
+		return append_char(config('themes.current').data, '/')
 
 	def theme_config(self, path):
 		if file_exists(path + 'config.json'):
 			config_file = path + 'config.json'
-			return config(file=config_file)
+			return config(file=config_file).data
+		else:
+			return {}
 
-	def get_template(self, template):
-		if file_exists(self.theme_dir + template):
-			print 'theme'
+	def template_path(self, name):
+		# returns full file name, content_dir, file_name, file_ext
+		file_name = name + prepend_char(self.config.get('ext'), '.')
+		return self.path + file_name
