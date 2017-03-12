@@ -1,5 +1,5 @@
 from flask import abort, render_template, Markup
-import os, sys, json, markdown, frontmatter
+import os, sys, json, markdown, frontmatter, re
 
 def append_char(string, char):
 	return string + char if not string.endswith(char) else string
@@ -14,20 +14,18 @@ def file_exists(file):
 
 class config:
 	def __init__(self, val=None, file='config.json', delim='.'):
+		self.data = {}
 		if file_exists(file):
 			with open(file) as config_obj:
 				data = json.load(config_obj)
 
 			self.data = data
-			if val != None:
-				val = val.split(delim)
-				ndata = data
-				for item in val:
-					ndata = ndata.get(item)
+			if type(val) == str:
+				sub_dict = data
+				for key in val.split(delim):
+					sub_dict = sub_dict.get(key)
 				else:
-					self.data = ndata
-		else:
-			self.data = {}
+					self.data = sub_dict
 
 class trigger_event:
 	def __init__(self, event_name, params=[]):
@@ -71,10 +69,28 @@ class Filename:
 		file_name = append_char(name, prepend_char(self.main_config.get('ext'), '.'))
 		return content_dir + file_name
 
+class Args:
+	def __init__(self, args):
+		self.args = args.args
+		self.child_pages()
+
+	def child_pages(self):
+		children = self.args.get('child_pages')
+		print children
+		if type(children) == str:
+			children = re.split(', | ', children)
+			child_content = {}
+			for child in children:
+				filename = Filename(child)
+				content = Content(filename)
+				if child_content.get(child) == None:
+					child_content[child] = Render(content.content).output
+			print enumerate(child_content)
+
 class Content:
 	def __init__(self, file_path):
 		data = frontmatter.loads(self.file_contents(file_path))
-		self.raw_content = data.content
+		self.content = data.content
 		self.args = data.metadata
 
 	def file_contents(self, file_path):
@@ -83,8 +99,8 @@ class Content:
 		return file_contents
 
 class Render:
-	def __init__(self, template, content):
-		self.output = render_template(template.template, content=Markup(markdown.markdown(content.raw_content)), **content.args)
+	def __init__(self, content):
+		self.output = Markup(markdown.markdown(content))
 
 class Theme:
 	def __init__(self):
@@ -100,8 +116,8 @@ class Theme:
 			self.config = config(file=config_file).data or {}
 
 class Template:
-	def __init__(self, template=''):
-		self.template(template)
+	def __init__(self, template):
+		self.template(template.args.get('template', ''))
 
 	def template(self, template_name):
 		theme = Theme()

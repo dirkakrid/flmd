@@ -1,7 +1,11 @@
 from flask import Flask, abort, render_template, Markup
 # from preflask import preflask
 
-import os, json, markdown, frontmatter
+import os, json, markdown, frontmatter, sys
+
+# forces utf-8 as the default encoding
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 from classes import *
 
@@ -25,8 +29,9 @@ app.template_folder = theme.jinja_dir
 def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
-	template = Template(content.args.get('template', ''))
-	return Render(template, content).output
+	args = Args(content)
+	template = Template(content)
+	return render_template(template.template, content=Render(content.content).output, **args.args)
 
 @app.errorhandler(404)
 def _404(error):
