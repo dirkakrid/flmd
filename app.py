@@ -1,5 +1,5 @@
 from flask import Flask, abort, render_template, Markup
-from preflask import preflask
+# from preflask import preflask
 
 import os, json, markdown, frontmatter
 
@@ -14,11 +14,11 @@ theme = Theme()
 
 app.template_folder = theme.jinja_dir
 
-pre = preflask()
+# pre = preflask()
 
-@app.route(pre.rule)
-def pre_files(file):
-    return pre.serve(file)
+# @app.route(pre.rule)
+# def pre_files(file):
+#     return pre.serve(file)
 
 @app.route('/')
 @app.route('/<path:url>')

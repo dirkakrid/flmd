@@ -29,10 +29,21 @@ class config:
 			else:
 				self.data = ndata
 
+class trigger_event:
+	def __init__(self, event_name, params=[]):
+		print event_name
+
+class handle_event:
+	def __init__(self, event_name, params=[]):
+		if hasattr(class_name, event_name):
+			pass
+
 class Filename:
 	def __init__(self, url):
 		self.main_config = config('files').data
 		self.file = ''
+
+		trigger_event('get_url', [url])
 
 		if url.endswith('/'):
 			if file_exists(self.file_path(url + 'index')):
@@ -40,6 +51,7 @@ class Filename:
 			elif file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
 			else:
+				trigger_event('404', [])
 				abort(404)
 		else:
 			if file_exists(self.file_path(url)):
@@ -47,7 +59,10 @@ class Filename:
 			elif file_exists(self.file_path(url + '/' + 'index')):
 				self.file = self.file_path(url + '/' + 'index')
 			else:
+				trigger_event('404', [])
 				abort(404)
+
+		trigger_event('file', [self.file])
 
 	def file_path(self, name):
 		# returns full file name, content_dir, file_name, file_ext
@@ -58,13 +73,20 @@ class Filename:
 class Content:
 	def __init__(self, file_path):
 		data = frontmatter.loads(self.file_contents(file_path))
-		self.content = Markup(markdown.markdown(data.content))
+		self.content = data.content
+		trigger_event('md_content_raw', [data.content])
+		trigger_event('md_content_compiled', [self.content])
+		trigger_event('md_args', [data.metadata])
 		self.args = data.metadata
 
 	def file_contents(self, file_path):
 		with open(file_path, 'r') as file_obj:
 			file_contents = file_obj.read()
 		return file_contents
+
+class Render:
+	def __init__(self, template, raw_content, args={}):
+		return render_template(template, content=Markup(markdown.markdown(raw_content)), **args)
 
 class Theme:
 	def __init__(self):
