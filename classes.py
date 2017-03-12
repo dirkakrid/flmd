@@ -38,7 +38,7 @@ class handle_event:
 			# pass
 
 class Filename:
-	def __init__(self, url):
+	def __init__(self, url, child=False):
 		self.main_config = config('files').data
 		self.file = ''
 
@@ -51,39 +51,42 @@ class Filename:
 				self.file = self.file_path(url)
 			else:
 				trigger_event('404', [])
-				abort(404)
+				if not child:
+					abort(404)
 		else:
 			if file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
-			elif file_exists(self.file_path(url + '/' + 'index')):
-				self.file = self.file_path(url + '/' + 'index')
+			elif file_exists(self.file_path(url + '/index')):
+				self.file = self.file_path(url + '/index')
 			else:
-				trigger_event('404', [])
-				abort(404)
+				if not child:
+					abort(404)
 
 		trigger_event('file', [self.file])
 
 	def file_path(self, name):
-		# returns full file name, content_dir, file_name, file_ext
+		name = name.lstrip('/') if name.startswith('/') else name
 		content_dir = append_char(self.main_config.get('dir'), '/')
 		file_name = append_char(name, prepend_char(self.main_config.get('ext'), '.'))
 		return content_dir + file_name
 
 class Args:
-	def __init__(self, args):
-		self.args = args.args
+	def __init__(self, content):
+		self.args = content.args
 		self.child_pages()
 
 	def child_pages(self):
 		children = self.args.get('child_pages')
+		self.args['child'] = {0:{}}
 		if type(children) == str:
 			children = re.split(', | ', children)
-			child_content = {}
+
+			child_content = {0:{}}
 			for child in children:
-				filename = Filename(child).file
-				content = Content(filename)
-				if child_content.get(child) == None:
-					child_content[child] = {'content':Render(content.content).output, 'args':content.args}
+				filename = Filename(child, child=True)
+				content = Content(filename.file)
+				child_content[children.index(child)] = content.args or {}
+				child_content[children.index(child)]['content'] = Render(content.content).output
 
 			self.args.pop('child_pages')
 			self.args['child'] = child_content
@@ -95,10 +98,11 @@ class Content:
 		self.args = data.metadata
 
 	def file_contents(self, file_path):
-		print file_path
-		with open(file_path, 'r') as file_obj:
-			file_contents = file_obj.read()
-		return file_contents
+		if file_exists(file_path):
+			with open(file_path, 'r') as file_obj:
+				file_contents = file_obj.read()
+			return file_contents
+		return ''
 
 class Render:
 	def __init__(self, content):
