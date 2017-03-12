@@ -76,16 +76,17 @@ class Args:
 
 	def child_pages(self):
 		children = self.args.get('child_pages')
-		print children
 		if type(children) == str:
 			children = re.split(', | ', children)
 			child_content = {}
 			for child in children:
-				filename = Filename(child)
+				filename = Filename(child).file
 				content = Content(filename)
 				if child_content.get(child) == None:
-					child_content[child] = Render(content.content).output
-			print enumerate(child_content)
+					child_content[child] = {'content':Render(content.content).output, 'args':content.args}
+
+			self.args.pop('child_pages')
+			self.args['child'] = child_content
 
 class Content:
 	def __init__(self, file_path):
@@ -94,6 +95,7 @@ class Content:
 		self.args = data.metadata
 
 	def file_contents(self, file_path):
+		print file_path
 		with open(file_path, 'r') as file_obj:
 			file_contents = file_obj.read()
 		return file_contents
