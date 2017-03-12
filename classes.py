@@ -73,10 +73,7 @@ class Filename:
 class Content:
 	def __init__(self, file_path):
 		data = frontmatter.loads(self.file_contents(file_path))
-		self.content = data.content
-		trigger_event('md_content_raw', [data.content])
-		trigger_event('md_content_compiled', [self.content])
-		trigger_event('md_args', [data.metadata])
+		self.raw_content = data.content
 		self.args = data.metadata
 
 	def file_contents(self, file_path):
@@ -85,8 +82,8 @@ class Content:
 		return file_contents
 
 class Render:
-	def __init__(self, template, raw_content, args={}):
-		return render_template(template, content=Markup(markdown.markdown(raw_content)), **args)
+	def __init__(self, template, content):
+		self.output = render_template(template.template, content=Markup(markdown.markdown(content.raw_content)), **content.args)
 
 class Theme:
 	def __init__(self):

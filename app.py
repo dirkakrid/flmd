@@ -26,7 +26,7 @@ def index(url='/'):
 	filename = Filename(url).file
 	content = Content(filename)
 	template = Template(content.args.get('template', ''))
-	return render_template(template.template, content=content.content, **content.args)
+	return Render(template, content).output
 
 @app.errorhandler(404)
 def _404(error):
