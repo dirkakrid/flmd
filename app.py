@@ -31,7 +31,10 @@ def index(url='/'):
 	content = Content(filename.file)
 	args = Args(content)
 	template = Template(content)
-	return render_template(template.template, content=Render(content.content).output, **args.args)
+	rendered = render_template(template.template, content=Render(content.content).output, **args.args)
+	if url == '404':
+		return rendered, 404
+	return rendered
 
 @app.errorhandler(404)
 def _404(error):
