@@ -14,20 +14,23 @@ def file_exists(file):
 
 class config:
 	def __init__(self, val=None, file='config.json', delim='.'):
-		with open(file) as config_obj:
-			data = json.load(config_obj)
+		if file_exists(file):
+			with open(file) as config_obj:
+				data = json.load(config_obj)
 
-		self.data = data
-		if val != None:
-			val = val.split(delim)
-			ndata = data
-			for item in val:
-				if item in ndata:
-					ndata = ndata[item]
+			self.data = data
+			if val != None:
+				val = val.split(delim)
+				ndata = data
+				for item in val:
+					if item in ndata:
+						ndata = ndata[item]
+					else:
+						ndata = None
 				else:
-					ndata = None
-			else:
-				self.data = ndata
+					self.data = ndata
+		else:
+			self.data = {}
 
 class trigger_event:
 	def __init__(self, event_name, params=[]):
