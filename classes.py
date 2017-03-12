@@ -23,10 +23,7 @@ class config:
 				val = val.split(delim)
 				ndata = data
 				for item in val:
-					if item in ndata:
-						ndata = ndata[item]
-					else:
-						ndata = None
+					ndata = ndata.get(item)
 				else:
 					self.data = ndata
 		else:
@@ -34,12 +31,13 @@ class config:
 
 class trigger_event:
 	def __init__(self, event_name, params=[]):
-		print event_name
+		handle_event(event_name, params)
 
 class handle_event:
 	def __init__(self, event_name, params=[]):
-		if hasattr(class_name, event_name):
-			pass
+		pass
+		# if hasattr(class_name, event_name):
+			# pass
 
 class Filename:
 	def __init__(self, url):
