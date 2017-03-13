@@ -34,8 +34,9 @@ class trigger_event:
 class handle_event:
 	def __init__(self, event_name, params=[]):
 		pass
-		# if hasattr(class_name, event_name):
-			# pass
+		# for plugin in plugins:
+			# if hasattr(plugin_class, event_name):
+				# get_attr(plugin_class, eventname, **params)
 
 class Filename:
 	def __init__(self, url, child=False):
