@@ -147,3 +147,9 @@ class Plugin:
 		main_config = config('plugins').data
 		self.plugins_dir = append_char(main_config.get('dir'), '/')
 		self.plugins = os.listdir(self.plugins_dir) if os.path.isdir(self.plugins_dir) else []
+		self.load()
+
+	def load(self):
+		for plugin in self.plugins:
+			plugin = plugin.rstrip('.py')
+			__import__(plugin)

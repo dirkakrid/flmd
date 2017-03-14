@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.threaded = True
 app.debug = config('debug').data or False
 
+plugin = Plugin()
 theme = Theme()
 
 app.template_folder = theme.jinja_dir
