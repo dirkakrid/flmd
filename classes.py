@@ -148,13 +148,15 @@ class Plugins:
 		self.plugin_dir = append_char(main_config.get('dir'), '/')
 		self.plugin_list = os.listdir(self.plugin_dir) if os.path.isdir(self.plugin_dir) else []
 		self.plugin_list = list(set(['.'.join(x.split('.')[:-1]) for x in self.plugin_list]))
-		sys.path.append(os.path.abspath(self.plugin_dir))
+		sys.path.insert(0, os.path.abspath(self.plugin_dir))
 		self.load()
+		sys.path.remove(os.path.abspath(self.plugin_dir))
 
 	def load(self):
 		self.plugins = {}
-
 		for plugin in self.plugin_list:
-			module = __import__(plugin)
+			module = __import__(plugin, fromlist=['*'])
 			if hasattr(module, plugin):
 				self.plugins[plugin] = getattr(module, plugin)
+
+	# def get_plugin(self, name)
