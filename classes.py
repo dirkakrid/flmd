@@ -142,14 +142,19 @@ class Template:
 			else:
 				raise NameError('template not found `{}`'.format(theme.theme_path + template_name + theme_ext))
 
-class Plugin:
+class Plugins:
 	def __init__(self):
 		main_config = config('plugins').data
-		self.plugins_dir = append_char(main_config.get('dir'), '/')
-		self.plugins = os.listdir(self.plugins_dir) if os.path.isdir(self.plugins_dir) else []
+		self.plugin_dir = append_char(main_config.get('dir'), '/')
+		self.plugin_list = os.listdir(self.plugin_dir) if os.path.isdir(self.plugin_dir) else []
+		self.plugin_list = list(set(['.'.join(x.split('.')[:-1]) for x in self.plugin_list]))
+		sys.path.append(os.path.abspath(self.plugin_dir))
 		self.load()
 
 	def load(self):
-		for plugin in self.plugins:
-			plugin = plugin.rstrip('.py')
-			__import__(plugin)
+		self.plugins = {}
+
+		for plugin in self.plugin_list:
+			module = __import__(plugin)
+			if hasattr(module, plugin):
+				self.plugins[plugin] = getattr(module, plugin)
