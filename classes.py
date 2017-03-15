@@ -28,22 +28,22 @@ class config:
 					self.data = sub_dict
 
 class trigger_event:
-	def __init__(self, event_name, params=[]):
-		handle_event(event_name, params)
+	def __init__(self, event_name):
+		handle_event(event_name)
 
 class handle_event:
-	def __init__(self, event_name, params=[]):
-		pass
-		# for plugin in plugins:
-			# if hasattr(plugin_class, event_name):
-				# get_attr(plugin_class, eventname, **params)
+	def __init__(self, event_name):
+		plugins = Plugins()
+		for plugin, instance in plugins.plugins.iteritems():
+			if hasattr(instance, event_name):
+				func = getattr(instance(), event_name)
+				func()
+
 
 class Filename:
 	def __init__(self, url, child=False):
 		self.main_config = config('files').data
 		self.file = ''
-
-		trigger_event('get_url', [url])
 
 		if url.endswith('/'):
 			if file_exists(self.file_path(url + 'index')):
@@ -51,7 +51,6 @@ class Filename:
 			elif file_exists(self.file_path(url)):
 				self.file = self.file_path(url)
 			else:
-				trigger_event('404', [])
 				if not child:
 					abort(404)
 		else:
@@ -62,8 +61,6 @@ class Filename:
 			else:
 				if not child:
 					abort(404)
-
-		trigger_event('file', [self.file])
 
 	def file_path(self, name):
 		name = name.lstrip('/') if name.startswith('/') else name
@@ -158,5 +155,3 @@ class Plugins:
 			module = __import__(plugin, fromlist=['*'])
 			if hasattr(module, plugin):
 				self.plugins[plugin] = getattr(module, plugin)
-
-	# def get_plugin(self, name)

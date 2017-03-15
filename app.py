@@ -17,8 +17,6 @@ app.debug = config('debug').data or False
 plugins = Plugins()
 theme = Theme()
 
-print plugins.plugins
-
 app.template_folder = theme.jinja_dir
 
 # pre = preflask()
@@ -30,6 +28,7 @@ app.template_folder = theme.jinja_dir
 @app.route('/')
 @app.route('/<path:url>')
 def index(url='/'):
+	trigger_event('onload')
 	filename = Filename(url)
 	content = Content(filename.file)
 	args = Args(content)
