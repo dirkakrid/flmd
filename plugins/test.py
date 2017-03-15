@@ -4,5 +4,6 @@ class test(plugin.plugin):
 	def __init__(self):
 		pass
 
-	def onload(self, name='', *args, **kwargs):
-		print '\n\nonload, {}\n\n'.format(name)
+	def onload(self, data):
+		data['filename'] = 'content/hello.md'
+		return data

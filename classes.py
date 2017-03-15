@@ -144,7 +144,8 @@ class Plugins:
 			self.plugins[plugin] = getattr(module, plugin)
 
 class trigger_event:
-	def __init__(self, event_name, *args, **kwargs):
-		self.return_data = []
+	def __init__(self, event_name, data):
+		self.plugin_ret = data
 		for plugin, instance in Plugins().plugins.iteritems():
-			self.return_data.append(getattr(instance(), 'handle_event')(event_name, *args, **kwargs))
+			for x, y in getattr(instance(), 'handle_event')(event_name, data).iteritems():
+				self.plugin_ret[x] = y
