@@ -1,7 +1,6 @@
 ---
 title: hello
 template: index
-child_pages: hello
 ---
 # flmd
 

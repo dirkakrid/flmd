@@ -7,4 +7,6 @@ class test(plugin.plugin):
 		pass
 
 	def onload(self, data):
+		# if data.get('filename') != None:
+			# data['filename'] = 'content/hello.md'
 		pass
