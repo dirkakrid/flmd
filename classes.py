@@ -132,6 +132,7 @@ class Plugins:
 		self.plugin_dir = append_char(main_config.get('dir'), '/')
 		self.plugin_list = os.listdir(self.plugin_dir) if os.path.isdir(self.plugin_dir) else []
 		self.plugin_list = list(set(['.'.join(x.split('.')[:-1]) for x in self.plugin_list]))
+		self.plugin_list.remove('plugin')
 		sys.path.insert(0, os.path.abspath(self.plugin_dir))
 		self.load()
 		sys.path.remove(os.path.abspath(self.plugin_dir))
@@ -143,6 +144,6 @@ class Plugins:
 			self.plugins[plugin] = getattr(module, plugin)
 
 class trigger_event:
-	def __init__(self, event_name):
+	def __init__(self, event_name, *args, **kwargs):
 		for plugin, instance in Plugins().plugins.iteritems():
-			getattr(instance(), 'handle_event')(event_name)
+			getattr(instance(), 'handle_event')(event_name, *args, **kwargs)

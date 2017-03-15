@@ -1,8 +1,8 @@
-from plugin import plugin
+import plugin
 
-class test(plugin):
+class test(plugin.plugin):
 	def __init__(self):
 		pass
 
-	def onload(self):
-		print '\n\nrun from test\n\n'
+	def onload(self, name='', *args, **kwargs):
+		print '\n\nonload, {}\n\n'.format(name)

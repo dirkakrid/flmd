@@ -28,7 +28,7 @@ app.template_folder = theme.jinja_dir
 @app.route('/')
 @app.route('/<path:url>')
 def index(url='/'):
-	trigger_event('onload')
+	trigger_event('onload', 'hi')
 	filename = Filename(url)
 	content = Content(filename.file)
 	args = Args(content)
