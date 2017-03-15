@@ -5,5 +5,8 @@ class plugin:
 	def handle_event(self, event_name, data):
 		if hasattr(self, event_name):
 			func = getattr(self, event_name, None)
-			if callable(func):
+			enabled = True
+			if hasattr(self, '__enabled__'):
+				enabled = getattr(self, '__enabled__', None)
+			if callable(func) and enabled:
 				return func(data)
