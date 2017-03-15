@@ -5,5 +5,4 @@ class test(plugin.plugin):
 		pass
 
 	def onload(self, data):
-		data['filename'] = 'content/hello.md'
-		return data
+		data[0] = 'content/hello.md'
