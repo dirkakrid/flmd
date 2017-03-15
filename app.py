@@ -28,7 +28,7 @@ app.template_folder = theme.jinja_dir
 @app.route('/')
 @app.route('/<path:url>')
 def index(url='/'):
-	trigger_event('onload', 'hi')
+	print trigger_event('onload').return_data
 	filename = Filename(url)
 	content = Content(filename.file)
 	args = Args(content)
@@ -44,4 +44,3 @@ def _404(error):
 
 if __name__ == "__main__":
 	app.run()
-	#, host='0.0.0.0' #for wsgi.py

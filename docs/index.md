@@ -13,3 +13,11 @@ class CLASS_NAME(plugin):
 > both the filename, and the classname **must** be the same for it to be called
 
 > *example class, note, `plugin` **must** be an object of the class*
+
+##### functions
+
+```python
+def EVENT_NAME(self, *args, **kwargs):
+		pass
+```
+> where event name is the trigger_event name

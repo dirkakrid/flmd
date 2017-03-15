@@ -6,4 +6,4 @@ class plugin:
 		if hasattr(self, event_name):
 			func = getattr(self, event_name, None)
 			if callable(func):
-				func(*args, **kwargs)
+				return func(*args, **kwargs)
