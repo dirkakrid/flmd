@@ -27,19 +27,6 @@ class config:
 				else:
 					self.data = sub_dict
 
-class trigger_event:
-	def __init__(self, event_name):
-		handle_event(event_name)
-
-class handle_event:
-	def __init__(self, event_name):
-		plugins = Plugins()
-		for plugin, instance in plugins.plugins.iteritems():
-			if hasattr(instance, event_name):
-				func = getattr(instance(), event_name)
-				func()
-
-
 class Filename:
 	def __init__(self, url, child=False):
 		self.main_config = config('files').data
@@ -153,5 +140,9 @@ class Plugins:
 		self.plugins = {}
 		for plugin in self.plugin_list:
 			module = __import__(plugin, fromlist=['*'])
-			if hasattr(module, plugin):
-				self.plugins[plugin] = getattr(module, plugin)
+			self.plugins[plugin] = getattr(module, plugin)
+
+class trigger_event:
+	def __init__(self, event_name):
+		for plugin, instance in Plugins().plugins.iteritems():
+			getattr(instance(), 'handle_event')(event_name)
