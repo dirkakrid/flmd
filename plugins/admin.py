@@ -5,5 +5,5 @@ class admin(plugin.plugin):
 	__priority__ 	= 9
 
 	def init(self, *args, **kwargs):
-		if kwargs.get('url', '').startswith('admin'):
+		if args[0].startswith('admin'):
 			print 'admin'

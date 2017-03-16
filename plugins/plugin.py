@@ -9,7 +9,8 @@ class plugin:
 			try:
 				return func(*args, **kwargs)
 			except TypeError:
-				return args, kwargs
+				pass
+		return *args, **kwargs
 
 	def get_variable(self, name, default=None):
 		if hasattr(self, name):

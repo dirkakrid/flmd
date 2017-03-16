@@ -14,6 +14,7 @@ def file_exists(file):
 
 class config:
 	def __init__(self, val=None, file='config.json', delim='.'):
+		"""loads json file; returns to dict obj of contents"""
 		self.data = {}
 		if file_exists(file):
 			with open(file) as config_obj:
@@ -144,6 +145,7 @@ class Plugins:
 
 		sys.path.remove(os.path.abspath(self.plugin_dir))
 
+		# magically prioritizes the magic
 		self.plugins = {plugin:instance for plugin, instance in sorted(self.plugins.iteritems(), key=lambda (k,v): (getattr(v(), '__priority__') if hasattr(v(), '__priority__') and type(getattr(v(), '__priority__')) == int else float('inf'),k))}
 
 class event_trigger:

@@ -29,7 +29,7 @@ app.template_folder = theme.jinja_dir
 @app.route('/<path:url>')
 def index(url='/'):
 	err_code = 200
-	event_trigger('init', url=url)
+	event_trigger('init', url)
 	filename = Filename(url).file
 	content = Content(filename)
 	args = Args(content)
