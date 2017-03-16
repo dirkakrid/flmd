@@ -130,19 +130,33 @@ class Plugins:
 	def __init__(self):
 		main_config = config('plugins').data
 		self.plugin_dir = append_char(main_config.get('dir'), '/')
-		self.plugin_list = os.listdir(self.plugin_dir) if os.path.isdir(self.plugin_dir) else []
-		self.plugin_list = list(set(['.'.join(x.split('.')[:-1]) for x in self.plugin_list]))
-		self.plugin_list.remove('plugin')
-		sys.path.insert(0, os.path.abspath(self.plugin_dir))
+		plugin_dir_list = os.listdir(self.plugin_dir) if os.path.isdir(self.plugin_dir) else []
+		self.plugin_list = list(set(['.'.join(x.split('.')[:-1]) for x in plugin_dir_list]))
 		self.load()
-		sys.path.remove(os.path.abspath(self.plugin_dir))
+		self.prioritize()
 
 	def load(self):
+		sys.path.insert(0, os.path.abspath(self.plugin_dir))
 		self.plugins = {}
+		plugins = {}
 		for plugin in self.plugin_list:
-			module = __import__(plugin, fromlist=['*'])
+			module = __import__(plugin)
 			if hasattr(module, plugin):
-				self.plugins[plugin] = getattr(module, plugin)
+				plugins[plugin] = getattr(module, plugin)
+
+		for plugin, instance in sorted(plugins.iteritems(), key=lambda (k,v): (v,k)):
+			self.plugins[plugin] = instance
+
+		sys.path.remove(os.path.abspath(self.plugin_dir))
+
+	def prioritize(self):
+		priorities = {}
+		re_priorities = {}
+		for plugin, instance in self.plugins.iteritems():
+			priorities[plugin] = getattr(instance(), '__priority__') if hasattr(instance(), '__priority__') else None
+
+		for plugin, priority in sorted(priorities.iteritems(), key=lambda (k,v): (float('inf') if v is None else v,k)):
+			re_priorities[plugin] = priority
 
 class event_trigger:
 	def __init__(self, event_name, *args, **kwargs):
