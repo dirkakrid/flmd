@@ -141,10 +141,10 @@ class Plugins:
 		self.plugins = {}
 		for plugin in self.plugin_list:
 			module = __import__(plugin, fromlist=['*'])
-			self.plugins[plugin] = getattr(module, plugin)
+			if hasattr(module, plugin):
+				self.plugins[plugin] = getattr(module, plugin)
 
 class event_trigger:
-	def __init__(self, event_name, data):
-		self.plugin_ret = data
+	def __init__(self, event_name, *args, **kwargs):
 		for plugin, instance in Plugins().plugins.iteritems():
-			getattr(instance(), 'event_handler')(event_name, data)
+			getattr(instance(), 'event_handler')(event_name, *args, **kwargs)

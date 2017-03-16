@@ -28,23 +28,19 @@ app.template_folder = theme.jinja_dir
 @app.route('/')
 @app.route('/<path:url>')
 def index(url='/'):
-	data = {}
+	err_code = 200
+	event_trigger('init', url=url)
 	filename = Filename(url).file
-
-	event_trigger('onload', file)
-
 	content = Content(filename)
 	args = Args(content)
 	template = Template(content)
 	rendered = render_template(template.template, content=Render(content.content).output, **args.args)
-	if url == '404':
-		return rendered, 404
-	return rendered
+	return rendered, err_code
 
 @app.errorhandler(404)
 def _404(error):
 	event_trigger('404')
-	return index('404')
+	return index('404')[0], 404
 
 if __name__ == "__main__":
 	app.run()
